@@ -1,5 +1,8 @@
 import { userValidation } from "@/app/_lib/validation";
+import { db } from "@/db";
 import { NextRequest, NextResponse } from "next/server";
+
+const dbH = db;
 
 export async function POST(req: NextRequest) {
     const body = await req.json();
