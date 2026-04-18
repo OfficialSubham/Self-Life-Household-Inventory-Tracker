@@ -39,6 +39,7 @@ export const Users = pgTable("users", {
     _id: integer("_id").primaryKey().generatedAlwaysAsIdentity(),
     name: varchar("name", { length: 255 }).notNull(),
     email: varchar("email", { length: 255 }).notNull().unique(),
+    password: varchar("password", { length: 255 }).notNull(),
     householdId: integer("household_id").references(() => Household._id),
     createdAt: timestamp("created_at").defaultNow(),
 });
