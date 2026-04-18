@@ -1,12 +1,18 @@
 import { userValidation } from "@/app/_lib/validation";
+import { db } from "@/db";
+import { Users } from "@/db/schema";
+import { compare } from "bcryptjs";
+import { eq } from "drizzle-orm";
+import { sign } from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
+
+const SECRET = process.env.JWT_SECRET || "";
 
 export async function POST(req: NextRequest) {
     const body = await req.json();
-    const { name, email, password } = body;
-
+    const { email, password } = body;
+    console.log(email);
     const { success } = userValidation.safeParse({
-        name,
         email,
         password,
     });
@@ -19,12 +25,32 @@ export async function POST(req: NextRequest) {
             { status: 400 },
         );
 
-    //Db work
+    const user = await db.select().from(Users).where(eq(Users.email, email));
 
-    return NextResponse.json(
-        {
-            message: "User created successfully",
-        },
-        { status: 201 },
+    if (!user[0])
+        return NextResponse.json(
+            {
+                message: "User with this email doesnot exists",
+            },
+            { status: 404 },
+        );
+
+    const isPasswordValid = await compare(password, user[0].password);
+
+    if (!isPasswordValid)
+        return NextResponse.json(
+            {
+                message: "Please enter valid credentials",
+            },
+            { status: 404 },
+        );
+    const token = sign(
+        { name: user[0].name, email: user[0].email, id: user[0]._id },
+        SECRET,
     );
+
+    return NextResponse.json({
+        message: "User created successfully",
+        token,
+    });
 }

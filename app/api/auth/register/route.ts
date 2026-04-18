@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const { name, email, password } = body;
-        console.log(name);
+
         const { success } = userValidation.safeParse({
             name,
             email,
