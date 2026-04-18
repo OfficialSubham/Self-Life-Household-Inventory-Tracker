@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1776528269367,
+      "tag": "0000_tiny_adam_warlock",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1776528673054,
+      "tag": "0001_tidy_raider",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776529026129,
+      "tag": "0002_military_pandemic",
+      "breakpoints": true
+    }
+  ]
+}
