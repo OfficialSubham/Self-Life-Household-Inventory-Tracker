@@ -11,3 +11,7 @@ Learned about:
 - creating db in docker postgres
 - making the drizzle config
 - using of \c to change the db in docker psql postgress
+
+19/04/26
+Today I learned about using the middleware file of next js for redirecting the user if they have no jwt cookie in their browser.
+Also learned about sending specific files to the route even though they are not logged in as it will create problem in rendering

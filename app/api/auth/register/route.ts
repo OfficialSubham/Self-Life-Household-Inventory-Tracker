@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { Users } from "@/db/schema";
 import { hash } from "bcryptjs";
 import { sign } from "jsonwebtoken";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const SALT = Number(process.env.SALT);
@@ -41,6 +42,13 @@ export async function POST(req: NextRequest) {
         const user = data[0];
 
         const token = sign(user, SECRET);
+
+        (await cookies()).set("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            path: "/",
+        });
 
         return NextResponse.json(
             {

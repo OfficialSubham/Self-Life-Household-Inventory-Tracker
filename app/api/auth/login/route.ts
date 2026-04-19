@@ -4,6 +4,7 @@ import { Users } from "@/db/schema";
 import { compare } from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { sign } from "jsonwebtoken";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const SECRET = process.env.JWT_SECRET || "";
@@ -49,6 +50,14 @@ export async function POST(req: NextRequest) {
         SECRET,
     );
 
+    (await cookies()).set("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+    });
+    //secure is always true but we are also developing locally so we
+    //need it to be work in localhost so that condition is applied
     return NextResponse.json({
         message: "User created successfully",
         token,
