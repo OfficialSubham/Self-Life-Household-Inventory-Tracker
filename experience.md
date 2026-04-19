@@ -15,3 +15,6 @@ Learned about:
 19/04/26
 Today I learned about using the middleware file of next js for redirecting the user if they have no jwt cookie in their browser.
 Also learned about sending specific files to the route even though they are not logged in as it will create problem in rendering
+
+learned about how to set cookies from the nextjs backend
+Learned about creating a auth middleware which will check user had send token in the bakend route
