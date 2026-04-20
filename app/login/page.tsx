@@ -1,8 +1,8 @@
 const Page = () => {
     return (
-        <div className="w-90 rounded-2xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] p-4 flex flex-col gap-7">
+        <div className="w-90 rounded-2xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] p-4 flex flex-col gap-5">
             <h1 className="text-center font-bold text-3xl">Login</h1>
-            <div className="flex gap-5 flex-col">
+            <div className="flex gap-2 flex-col">
                 <div className="flex flex-col">
                     <label htmlFor="email">Email</label>
                     <input
@@ -23,6 +23,12 @@ const Page = () => {
             <button className="bg-black text-white h-10 rounded-lg hover:bg-neutral-900 cursor-pointer">
                 Submit
             </button>
+            <span className="text-center text-sm">
+                Don&apos;t have an account?{" "}
+                <a href="/register" className="hover:underline ">
+                    Register
+                </a>
+            </span>
         </div>
     );
 };
