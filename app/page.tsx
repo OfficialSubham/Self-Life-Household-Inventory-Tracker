@@ -1,3 +1,3 @@
 export default function Home() {
-    return <div>Hello</div>;
+    return <div className="bg-white">Hello</div>;
 }
