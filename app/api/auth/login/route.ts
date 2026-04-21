@@ -1,4 +1,4 @@
-import { userValidation } from "@/app/_lib/validation";
+import { userValidation } from "@/_lib/validation";
 import { db } from "@/db";
 import { Users } from "@/db/schema";
 import { compare } from "bcryptjs";
