@@ -18,3 +18,9 @@ Also learned about sending specific files to the route even though they are not 
 
 learned about how to set cookies from the nextjs backend
 Learned about creating a auth middleware which will check user had send token in the bakend route
+
+23/04/26
+
+- Learned about creating/using google fonts from next/font
+- know about its use using variables in different places
+- Learned about connecting the variables in global css file for tailwind suggestion and use.
