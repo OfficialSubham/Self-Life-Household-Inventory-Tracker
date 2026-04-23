@@ -31,8 +31,12 @@ const Page = () => {
             },
             body: JSON.stringify(userDetails),
         });
-        if (res.ok) router.push("/dashboard");
-        console.log(res);
+        if (res.ok) {
+            router.push("/dashboard");
+            return;
+        }
+        const err = await res.json();
+        alert(err.message);
     };
 
     return (
