@@ -71,7 +71,6 @@ const Page = () => {
                         <input
                             type="password"
                             className="w-full border rounded-lg h-8 border-neutral-400 px-2"
-                            placeholder="johndoe@gmail.com"
                             name="password"
                             value={userDetails.password}
                             onChange={handleOnchange}
