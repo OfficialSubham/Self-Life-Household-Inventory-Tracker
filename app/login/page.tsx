@@ -53,27 +53,29 @@ const Page = () => {
                         placeholder="johndoe@gmail.com"
                     />
                 </div>
-                <div className="flex gap-2 items-center">
-                    <input
-                        type="password"
-                        className="w-full border rounded-lg h-8 border-neutral-400 px-2"
-                        placeholder="johndoe@gmail.com"
-                        name="password"
-                        value={userDetails.password}
-                        onChange={handleOnchange}
-                        ref={passwordElmRef}
-                    />
-                    <input
-                        type="checkbox"
-                        className="peer appearance-none h-5 w-5 border border-black rounded-md checked:bg-blue-500"
-                        onClick={() => {
-                            if (passwordElmRef.current) {
-                                if (passwordElmRef.current?.type == "password")
-                                    passwordElmRef.current.type = "text";
-                                else passwordElmRef.current.type = "password";
-                            }
-                        }}
-                    />
+                <div className="flex flex-col">
+                    <label htmlFor="password">Password</label>
+                    <div className="flex gap-2 items-center">
+                        <input
+                            type="password"
+                            className="w-full border rounded-lg h-8 border-neutral-400 px-2"
+                            name="password"
+                            value={userDetails.password}
+                            onChange={handleOnchange}
+                            ref={passwordElmRef}
+                        />
+                        <input
+                            type="checkbox"
+                            className="peer appearance-none h-5 w-5 border border-black rounded-md checked:bg-blue-500"
+                            onClick={() => {
+                                if (passwordElmRef.current) {
+                                    if (passwordElmRef.current?.type == "password")
+                                        passwordElmRef.current.type = "text";
+                                    else passwordElmRef.current.type = "password";
+                                }
+                            }}
+                        />
+                    </div>
                 </div>
             </div>
             <button
