@@ -1,11 +1,13 @@
 "use client";
 import { userValidation } from "@/_lib/validation";
+import { useLoadingStore } from "@/stores/loading-store";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
 const Page = () => {
     const router = useRouter();
-
+    const startLoading = useLoadingStore((state) => state.start);
+    const stopLoading = useLoadingStore((state) => state.end);
     const passwordElmRef = useRef<HTMLInputElement>(null);
 
     const [userDetails, setUserDetails] = useState({
@@ -23,19 +25,27 @@ const Page = () => {
     const handleLogin = async () => {
         const { success } = userValidation.safeParse(userDetails);
         if (!success) return alert("Please enter valid details");
-        const res = await fetch("/api/auth/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(userDetails),
-        });
-        if (res.ok) {
-            router.push("/dashboard");
-            return;
+        startLoading();
+        try {
+            const res = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(userDetails),
+            });
+            if (res.ok) {
+                stopLoading();
+                router.push("/dashboard");
+                return;
+            }
+            const err = await res.json();
+            alert(err.message);
+        } catch {
+            alert("something went wrong");
+        } finally {
+            stopLoading();
         }
-        const err = await res.json();
-        alert(err.message);
     };
 
     return (
