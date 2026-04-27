@@ -42,7 +42,7 @@ const Page = () => {
             }
             const err = await res.json();
             alert(err.message);
-        } catch (error) {
+        } catch {
             alert("somethign went wrong");
         } finally {
             stopLoading();
