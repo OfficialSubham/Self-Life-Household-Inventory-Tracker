@@ -15,8 +15,10 @@ export function proxy(req: NextRequest) {
     const isAuthPage = pathname == "/login" || pathname == "/register";
 
     if (!token && !isAuthPage) return NextResponse.redirect(new URL("/login", req.url));
-    if (token && isAuthPage) {
-        return NextResponse.redirect(new URL("/", req.url));
+    if (pathname == "/") {
+        if (token) {
+            return NextResponse.redirect(new URL("/dashboard", req.url));
+        } else return NextResponse.redirect(new URL("/login", req.url));
     }
     return NextResponse.next();
 }
