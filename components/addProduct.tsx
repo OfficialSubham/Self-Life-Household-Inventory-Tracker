@@ -1,14 +1,32 @@
 "use client";
 import { categoryEnum } from "@/db/schema";
+import { useHandleOnChange } from "@/lib/utils";
 import { useProductStore } from "@/stores/product-store";
 import { useEffect } from "react";
 
+type ProductDetailsType = {
+    productName: string;
+    category: string;
+    quantity: number;
+    expiryDate: string;
+};
+
 const AddProduct = () => {
     const hideAddProduct = useProductStore((state) => state.removeAddProduct);
+    const { details, handleOnChange } = useHandleOnChange<ProductDetailsType>({
+        productName: "",
+        category: "",
+        quantity: 1,
+        expiryDate: "",
+    });
+
+    const handleSubmit = () => {
+        console.log(details);
+    };
+
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape") {
-                console.log("hello");
                 hideAddProduct();
             }
         };
@@ -24,14 +42,21 @@ const AddProduct = () => {
                     <label htmlFor="productName">Product Name</label>
                     <input
                         type="text"
-                        name="name"
+                        name="productName"
                         className="border rounded-lg h-10 border-neutral-400 px-2"
                         placeholder="Nutella"
+                        value={details.productName}
+                        onChange={handleOnChange}
                     />
                 </div>
                 <div>
                     <label htmlFor="category">Category</label>
-                    <select className="w-full h-10 border border-neutral-400 rounded-lg">
+                    <select
+                        className="w-full h-10 border border-neutral-400 rounded-lg px-1"
+                        name="category"
+                        value={details.category}
+                        onChange={handleOnChange}
+                    >
                         {categoryEnum.enumValues.map((cat, idx) => {
                             return (
                                 <option value={cat} key={idx}>
@@ -48,6 +73,8 @@ const AddProduct = () => {
                         name="quantity"
                         className="border rounded-lg h-10 border-neutral-400 px-2"
                         placeholder="1"
+                        value={details.quantity}
+                        onChange={handleOnChange}
                     />
                 </div>
                 <div className="flex flex-col">
@@ -57,9 +84,14 @@ const AddProduct = () => {
                         name="expiryDate"
                         className="border rounded-lg h-10 border-neutral-400 px-2"
                         placeholder="1"
+                        value={details.expiryDate}
+                        onChange={handleOnChange}
                     />
                 </div>
-                <button className="bg-black text-white h-10 rounded-lg hover:bg-neutral-900 cursor-pointer">
+                <button
+                    className="bg-black text-white h-10 rounded-lg hover:bg-neutral-900 cursor-pointer"
+                    onClick={handleSubmit}
+                >
                     Submit
                 </button>
             </div>
