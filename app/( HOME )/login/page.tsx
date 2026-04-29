@@ -36,7 +36,7 @@ const Page = () => {
             });
             if (res.ok) {
                 stopLoading();
-                router.push("/dashboard");
+                router.push("/home");
                 return;
             }
             const err = await res.json();
