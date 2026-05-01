@@ -1,5 +1,9 @@
+import { verify } from "jsonwebtoken";
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
+import { JwtPayload } from "./lib/types";
+
+const JWT_SECRET = process.env.JWT_SECRET || "";
 
 export function proxy(req: NextRequest) {
     const token = req.cookies.get("token")?.value;
@@ -14,11 +18,24 @@ export function proxy(req: NextRequest) {
 
     const isAuthPage = pathname == "/login" || pathname == "/register";
 
-    if (!token && !isAuthPage) return NextResponse.redirect(new URL("/login", req.url));
-    if (pathname == "/") {
-        if (token) {
-            return NextResponse.redirect(new URL("/dashboard", req.url));
-        } else return NextResponse.redirect(new URL("/login", req.url));
+    if (!token) {
+        if (!isAuthPage) return NextResponse.redirect(new URL("/login", req.url));
+        return NextResponse.next();
     }
-    return NextResponse.next();
+
+    try {
+        const decoded = verify(token, JWT_SECRET) as JwtPayload;
+
+        //I am checking where the client is in / route or in another route if there is no room id in his/her token
+        if (decoded.roomId == -1) {
+            if (pathname !== "/") return NextResponse.redirect(new URL("/", req.url));
+        }
+        if (decoded.roomId !== -1 && pathname == "/") {
+            return NextResponse.redirect(new URL("/home", req.url));
+        }
+
+        return NextResponse.next();
+    } catch {
+        return NextResponse.redirect(new URL("/login", req.url));
+    }
 }
