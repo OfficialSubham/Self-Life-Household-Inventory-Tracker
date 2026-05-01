@@ -45,8 +45,14 @@ export async function POST(req: NextRequest) {
             },
             { status: 404 },
         );
+
     const token = sign(
-        { name: user[0].name, email: user[0].email, id: user[0]._id, roomId: -1 },
+        {
+            name: user[0].name,
+            email: user[0].email,
+            id: user[0]._id,
+            roomId: user[0].householdId ?? -1,
+        },
         SECRET,
     );
 
