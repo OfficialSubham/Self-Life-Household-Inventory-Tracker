@@ -4,7 +4,7 @@ import { verify } from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "";
 
-export async function getUser(req: NextRequest) {
+export function getUser(req: NextRequest) {
     const token = req.cookies.get("token")?.value;
     if (!token) return null;
 
