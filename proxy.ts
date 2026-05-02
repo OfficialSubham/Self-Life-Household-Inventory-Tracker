@@ -24,18 +24,23 @@ export function proxy(req: NextRequest) {
     }
 
     try {
-        const decoded = verify(token, JWT_SECRET) as JwtPayload;
+        verify(token, JWT_SECRET) as JwtPayload;
 
         //I am checking where the client is in / route or in another route if there is no room id in his/her token
-        if (decoded.roomId == -1) {
-            if (pathname !== "/") return NextResponse.redirect(new URL("/", req.url));
-        }
-        if (decoded.roomId !== -1 && pathname == "/") {
-            return NextResponse.redirect(new URL("/home", req.url));
-        }
+        // if (decoded.roomId == -1) {
+        //     if (pathname !== "/") return NextResponse.redirect(new URL("/", req.url));
+        // }
+        // if (decoded.roomId !== -1 && pathname == "/") {
+        //     return NextResponse.redirect(new URL("/home", req.url));
+        // }
 
         return NextResponse.next();
     } catch {
-        return NextResponse.redirect(new URL("/login", req.url));
+        if (!isAuthPage) return NextResponse.redirect(new URL("/login", req.url));
+        return NextResponse.next();
     }
 }
+
+//Now i am checking weather there is token if it has a token
+//Check for validation if not valid then redirect to login or signup
+//If valid then what you can visit any routes
