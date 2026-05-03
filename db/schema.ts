@@ -18,6 +18,12 @@ export const itemStatusEnum = pgEnum("status_enum", [
     "wasted",
 ]);
 
+export const roomJoiningStatus = pgEnum("room_joining_status", [
+    "pending",
+    "succeed",
+    "rejected",
+]);
+
 export const Household = pgTable(
     "household",
     {
@@ -58,4 +64,15 @@ export const Items = pgTable("items", {
     status: itemStatusEnum("status").default("fresh"),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at"),
+});
+
+export const RoomJoinStatus = pgTable("room_join_status", {
+    _id: integer("_id").primaryKey().generatedAlwaysAsIdentity(),
+    joinedStatus: roomJoiningStatus("joined_status").default("pending"),
+    houseHoldId: integer("household_id")
+        .notNull()
+        .references(() => Household._id),
+    userId: integer("user_id")
+        .notNull()
+        .references(() => Users._id),
 });
