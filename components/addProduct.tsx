@@ -2,7 +2,7 @@
 import { categoryEnum } from "@/db/schema";
 import { useHandleOnChange } from "@/lib/utils";
 import { useProductStore } from "@/stores/product-store";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 type ProductDetailsType = {
     productName: string;
@@ -12,6 +12,7 @@ type ProductDetailsType = {
 };
 
 const AddProduct = () => {
+    const addProductRef = useRef<HTMLDivElement | null>(null);
     const hideAddProduct = useProductStore((state) => state.removeAddProduct);
     const { details, handleOnChange } = useHandleOnChange<ProductDetailsType>({
         productName: "",
@@ -30,14 +31,26 @@ const AddProduct = () => {
                 hideAddProduct();
             }
         };
+        const handleClick = (event: MouseEvent) => {
+            if (!addProductRef.current) return;
+            if (!addProductRef.current.contains(event.target as Node)) {
+                hideAddProduct();
+            }
+        };
+
         window.addEventListener("keydown", handleKeyDown);
+        document.addEventListener("mousedown", handleClick);
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
+            document.removeEventListener("mousedown", handleClick);
         };
     });
     return (
         <div className="bg-black/50 backdrop-blur-xs fixed inset-0 items-center flex justify-center">
-            <div className="w-120 bg-white rounded-2xl border p-4 gap-4 flex flex-col">
+            <div
+                className="w-120 bg-white rounded-2xl border p-4 gap-4 flex flex-col"
+                ref={addProductRef}
+            >
                 <div className="flex flex-col">
                     <label htmlFor="productName">Product Name</label>
                     <input
