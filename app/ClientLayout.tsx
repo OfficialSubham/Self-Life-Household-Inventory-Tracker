@@ -2,6 +2,7 @@
 import { useLoadingStore } from "@/stores/loading-store";
 import Loading from "@/components/loading";
 import { useEffect } from "react";
+
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const loading = useLoadingStore((state) => state.loading);
 
