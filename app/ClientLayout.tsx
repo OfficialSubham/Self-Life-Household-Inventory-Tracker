@@ -2,9 +2,22 @@
 import { useLoadingStore } from "@/stores/loading-store";
 import Loading from "@/components/loading";
 import { useEffect } from "react";
+import { useUserStore } from "@/stores/user-store";
 
-export default function ClientLayout({ children }: { children: React.ReactNode }) {
+export default function ClientLayout({
+    user,
+    children,
+}: {
+    children: React.ReactNode;
+    user: {
+        name: string;
+        email: string;
+        id: number;
+        roomId: number | null;
+    };
+}) {
     const loading = useLoadingStore((state) => state.loading);
+    const setUser = useUserStore((state) => state.setUser);
 
     useEffect(() => {
         if (loading) {
@@ -17,6 +30,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             document.body.style.overflow = "auto";
         };
     }, [loading]);
+
+    useEffect(() => {
+        if (!setUser) return;
+        setUser(user);
+        console.log(user);
+    }, [user, setUser]);
 
     return (
         <>

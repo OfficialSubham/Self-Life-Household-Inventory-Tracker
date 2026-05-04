@@ -1,7 +1,9 @@
 import { Inter, JetBrains_Mono, Oswald } from "next/font/google";
 import type { Metadata } from "next";
 import "./globals.css";
-import AuthLoader from "@/components/authLoader";
+import { redirect } from "next/navigation";
+import { getUserWithRoomStatus } from "@/actions/user";
+import ClientLayout from "./ClientLayout";
 
 export const metadata: Metadata = {
     title: "Inventory Management",
@@ -24,18 +26,24 @@ const mono = JetBrains_Mono({
     variable: "--font-mono",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const data = await getUserWithRoomStatus();
+    if (!data) redirect("/login");
+    const user = await data.json();
+    if (!user) redirect("/login");
+    else if (user.roomId) redirect("/home");
     return (
         <html lang="en" suppressHydrationWarning>
             <body
                 className={`min-h-screen flex flex-col bg-neutral-200 text-black ${inter.variable} ${oswald.variable} ${mono.variable}`}
             >
-                <AuthLoader />
-                {children}
+                <ClientLayout user={{ ...user.user, roomId: user.roomId }}>
+                    {children}
+                </ClientLayout>
             </body>
         </html>
     );
