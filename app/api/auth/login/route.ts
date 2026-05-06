@@ -1,4 +1,4 @@
-import { userValidation } from "@/_lib/validation";
+import { userValidation } from "@/lib/validation";
 import { db } from "@/db";
 import { Users } from "@/db/schema";
 import { compare } from "bcryptjs";
@@ -51,7 +51,6 @@ export async function POST(req: NextRequest) {
             name: user[0].name,
             email: user[0].email,
             id: user[0]._id,
-            roomId: user[0].householdId ?? -1,
         },
         SECRET,
     );

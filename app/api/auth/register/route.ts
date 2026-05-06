@@ -1,4 +1,4 @@
-import { userValidation } from "@/_lib/validation";
+import { userValidation } from "@/lib/validation";
 import { db } from "@/db";
 import { Users } from "@/db/schema";
 import { hash } from "bcryptjs";
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 
         const user = data[0];
 
-        const token = sign({ ...user, roomId: -1 }, SECRET);
+        const token = sign(user, SECRET);
 
         (await cookies()).set("token", token, {
             httpOnly: true,
