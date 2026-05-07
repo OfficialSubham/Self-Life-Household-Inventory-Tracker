@@ -10,7 +10,6 @@ const Page = () => {
     const stopLoading = useLoadingStore((state) => state.end);
     const [showPassword, setShowPassword] = useState(false);
     const [userDetails, setUserDetails] = useState({
-        name: "",
         email: "",
         password: "",
     });
@@ -22,12 +21,12 @@ const Page = () => {
         });
     };
 
-    const handleRegister = async () => {
+    const handleLogin = async () => {
         const { success } = userValidation.safeParse(userDetails);
         if (!success) return alert("Please enter valid details");
         startLoading();
         try {
-            const res = await fetch("/api/auth/register", {
+            const res = await fetch("/api/auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -42,7 +41,7 @@ const Page = () => {
             const err = await res.json();
             alert(err.message);
         } catch {
-            alert("somethign went wrong");
+            alert("something went wrong");
         } finally {
             stopLoading();
         }
@@ -50,39 +49,28 @@ const Page = () => {
 
     return (
         <div className="w-90 rounded-2xl shadow-[0_3px_10px_rgb(0,0,0,0.2)] p-4 flex flex-col gap-5">
-            <h1 className="text-center font-bold text-3xl">Register</h1>
+            <h1 className="text-center font-bold text-3xl">Login</h1>
             <div className="flex gap-2 flex-col">
-                <div className="flex flex-col">
-                    <label htmlFor="name">Name</label>
-                    <input
-                        type="text"
-                        className="border rounded-lg h-8 border-neutral-400 px-2"
-                        placeholder="John Doe"
-                        name="name"
-                        value={userDetails.name}
-                        onChange={handleOnchange}
-                    />
-                </div>
                 <div className="flex flex-col">
                     <label htmlFor="email">Email</label>
                     <input
                         type="text"
-                        className="border rounded-lg h-8 border-neutral-400 px-2"
-                        placeholder="johndoe@gmail.com"
                         name="email"
                         value={userDetails.email}
                         onChange={handleOnchange}
+                        className="border rounded-lg h-8 border-neutral-400 px-2"
+                        placeholder="johndoe@gmail.com"
                     />
                 </div>
                 <div className="flex flex-col">
                     <label htmlFor="password">Password</label>
                     <div className="flex gap-2 items-center">
                         <input
+                            type={showPassword ? "text" : "password"}
                             className="w-full border rounded-lg h-8 border-neutral-400 px-2"
                             name="password"
                             value={userDetails.password}
                             onChange={handleOnchange}
-                            type={showPassword ? "text" : "password"}
                         />
                         <input
                             type="checkbox"
@@ -96,14 +84,14 @@ const Page = () => {
             </div>
             <button
                 className="bg-black text-white h-10 rounded-lg hover:bg-neutral-900 cursor-pointer"
-                onClick={handleRegister}
+                onClick={handleLogin}
             >
                 Submit
             </button>
             <span className="text-center text-sm">
-                Already have an account?{" "}
-                <a href="/login" className="hover:underline ">
-                    Login
+                Don&apos;t have an account?{" "}
+                <a href="/register" className="hover:underline ">
+                    Register
                 </a>
             </span>
         </div>
