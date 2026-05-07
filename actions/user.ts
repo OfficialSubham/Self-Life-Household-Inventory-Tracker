@@ -19,17 +19,18 @@ export async function getUserWithRoomStatus() {
         const decoded = verify(token, JWT_SECRET) as JwtPayload;
         // Getting user room join status
         const result = await db
-            .select()
+            .select({
+                _id: Users._id,
+                joinedStatus: RoomJoinStatus.joinedStatus,
+                householdId: Users.householdId,
+                name: Users.name,
+                email: Users.email,
+            })
             .from(Users)
             .leftJoin(RoomJoinStatus, eq(Users._id, RoomJoinStatus.userId))
             .where(eq(Users._id, decoded.id));
         return Response.json({
-            user: decoded,
-            roomId:
-                result[0].room_join_status &&
-                result[0].room_join_status.joinedStatus == "succeed"
-                    ? result[0].room_join_status.houseHoldId
-                    : null,
+            user: result[0],
         });
     } catch (err) {
         console.log(err);
