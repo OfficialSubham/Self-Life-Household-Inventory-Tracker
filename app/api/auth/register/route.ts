@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 
         const user = data[0];
 
-        const token = sign(user, SECRET);
+        const token = sign({ ...user, householdId: null }, SECRET);
 
         (await cookies()).set("token", token, {
             httpOnly: true,

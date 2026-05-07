@@ -12,7 +12,6 @@ const SECRET = process.env.JWT_SECRET || "";
 export async function POST(req: NextRequest) {
     const body = await req.json();
     const { email, password } = body;
-    console.log(email);
     const { success } = userValidation.safeParse({
         email,
         password,
@@ -51,6 +50,7 @@ export async function POST(req: NextRequest) {
             name: user[0].name,
             email: user[0].email,
             id: user[0]._id,
+            householdId: user[0].householdId,
         },
         SECRET,
     );
