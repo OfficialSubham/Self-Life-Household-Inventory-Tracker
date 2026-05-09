@@ -1,7 +1,13 @@
+"use server";
+
 import { db } from "@/db";
 import { Household, Users } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { getUserWithRoomStatus } from "./user";
+import { getUserFromToken, getUserWithRoomStatus } from "./user";
+import { cookies } from "next/headers";
+import { sign } from "jsonwebtoken";
+
+const SECRET = process.env.JWT_SECRET || "";
 
 export async function createHome(name: string) {
     const invitationCode = crypto.randomUUID();
@@ -65,5 +71,51 @@ export async function joinHome(inviteCode: string) {
         };
     } catch (error) {
         return { status: 500, message: "Error", error, householdId: null };
+    }
+}
+
+export async function leaveHome() {
+    const token = (await cookies()).get("token")?.value;
+    if (!token) return { status: 401, message: "Unauthorized" };
+    try {
+        const user = getUserFromToken(token);
+        if (!user.householdId)
+            return { status: 400, message: "Not in a room", householdId: null };
+
+        const house = await db
+            .select()
+            .from(Household)
+            .where(eq(Household._id, user.householdId));
+        if (!house[0])
+            return {
+                status: 404,
+                message: "House Doesnot Exist with this id",
+                householdId: null,
+            };
+        await db.update(Users).set({ householdId: null }).where(eq(Users._id, user.id));
+
+        const newToken = sign(
+            {
+                name: user.name,
+                email: user.email,
+                id: user.id,
+                householdId: null,
+            },
+            SECRET,
+        );
+
+        (await cookies()).set("token", newToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            path: "/",
+        });
+
+        return {
+            status: 200,
+            message: "Left successfully",
+        };
+    } catch (error) {
+        return { status: 500, message: "Error", error };
     }
 }
