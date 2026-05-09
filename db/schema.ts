@@ -64,6 +64,7 @@ export const Items = pgTable("items", {
     status: itemStatusEnum("status").default("fresh"),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at"),
+    quantity: integer("quantity").notNull(),
 });
 
 export const RoomJoinStatus = pgTable("room_join_status", {
