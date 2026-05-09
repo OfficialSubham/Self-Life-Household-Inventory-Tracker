@@ -29,6 +29,20 @@
       "when": 1776530168316,
       "tag": "0003_broken_puff_adder",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1777711102765,
+      "tag": "0004_hesitant_skaar",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1778333003101,
+      "tag": "0005_steady_lockjaw",
+      "breakpoints": true
     }
   ]
 }
