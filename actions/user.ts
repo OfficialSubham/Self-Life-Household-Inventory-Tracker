@@ -37,3 +37,8 @@ export async function getUserWithRoomStatus() {
         return Response.json({ user: null, roomId: null });
     }
 }
+
+export function getUserFromToken(token: string) {
+    const decoded = verify(token, JWT_SECRET) as JwtPayload;
+    return decoded;
+}
