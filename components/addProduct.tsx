@@ -1,12 +1,15 @@
 "use client";
+import { createProduct } from "@/actions/productActions";
 import { categoryEnum } from "@/db/schema";
 import { useHandleOnChange } from "@/lib/utils";
+import { productSchema } from "@/lib/validation";
+import { useLoadingStore } from "@/stores/loading-store";
 import { useProductStore } from "@/stores/product-store";
 import { useEffect, useRef } from "react";
 
 type ProductDetailsType = {
     productName: string;
-    category: string;
+    category: "other" | "produce" | "dairy" | "meat" | "pantry" | "frozen";
     quantity: number;
     expiryDate: string;
 };
@@ -14,15 +17,28 @@ type ProductDetailsType = {
 const AddProduct = () => {
     const addProductRef = useRef<HTMLDivElement | null>(null);
     const hideAddProduct = useProductStore((state) => state.removeAddProduct);
+    const startLoading = useLoadingStore((state) => state.start);
+    const stopLoading = useLoadingStore((state) => state.end);
+
     const { details, handleOnChange } = useHandleOnChange<ProductDetailsType>({
         productName: "",
-        category: "",
+        category: "other",
         quantity: 1,
         expiryDate: "",
     });
 
-    const handleSubmit = () => {
-        console.log(details);
+    const handleSubmit = async () => {
+        const { success, error } = productSchema.safeParse(details);
+        console.log(error);
+        if (!success) return alert("Provide valid product details");
+        startLoading();
+        const res = await createProduct(details);
+        stopLoading();
+        if (!res) alert("Something went wrong please try after some time");
+        else {
+            alert(res.message);
+            hideAddProduct();
+        }
     };
 
     useEffect(() => {
