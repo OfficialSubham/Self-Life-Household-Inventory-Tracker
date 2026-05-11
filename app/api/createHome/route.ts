@@ -1,4 +1,4 @@
-import { createHome } from "@/actions/createHome";
+import { createHome } from "@/actions/homeActions";
 import { getUser } from "@/lib/auth";
 import { sign } from "jsonwebtoken";
 import { cookies } from "next/headers";
