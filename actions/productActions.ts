@@ -35,8 +35,7 @@ export const createProduct = async ({
             quantity,
         });
         return { message: "Successfully Created" };
-    } catch (error) {
-        console.log("Create Product Error : ", error);
+    } catch {
         return null;
     }
 };
