@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { RoomJoinStatus, Users } from "@/db/schema";
+import { Household, Items, RoomJoinStatus, Users } from "@/db/schema";
 import { JwtPayload } from "@/lib/types";
 import { eq } from "drizzle-orm";
 import { verify } from "jsonwebtoken";
@@ -38,7 +38,72 @@ export async function getUserWithRoomStatus() {
     }
 }
 
+export async function getUserWithAllProduct() {
+    const token = (await cookies()).get("token")?.value;
+    if (!token) return null;
+    try {
+        const decoded = verify(token, JWT_SECRET) as JwtPayload;
+        // Getting user room join status
+        const user = await db
+            .select({
+                _id: Users._id,
+                householdId: Users.householdId,
+                name: Users.name,
+                email: Users.email,
+            })
+            .from(Users)
+            .where(eq(Users._id, decoded.id));
+
+        if (!user[0]) return null;
+
+        const items = await db
+            .select({
+                _id: Items._id,
+                householdId: Items.householdId,
+                addedBy: Items.addedBy,
+                name: Items.name,
+                category: Items.category,
+                expiryDate: Items.expiryDate,
+                status: Items.status,
+                createdAt: Items.createdAt,
+                updatedAt: Items.updatedAt,
+                quantity: Items.quantity,
+            })
+            .from(Items)
+            .where(eq(Items.householdId, user[0].householdId!));
+        return {
+            user: user[0],
+            items,
+        };
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
 export function getUserFromToken(token: string) {
     const decoded = verify(token, JWT_SECRET) as JwtPayload;
     return decoded;
+}
+
+export async function getAllMembers() {
+    const token = (await cookies()).get("token")?.value;
+    if (!token) return null;
+
+    const user = getUserFromToken(token);
+
+    const users = await db
+        .select({
+            _id: Users._id,
+            householdId: Users.householdId,
+            name: Users.name,
+            email: Users.email,
+        })
+        .from(Users)
+        .where(eq(Users.householdId, user.householdId));
+    const houseDetails = await db
+        .select()
+        .from(Household)
+        .where(eq(Household._id, user.householdId));
+    return { users, houseDetails: houseDetails[0] };
 }
