@@ -1,5 +1,5 @@
 "use server";
-import { Product } from "@/lib/types";
+import { Product, ProductDetails } from "@/lib/types";
 import { db } from "@/db";
 import { Items } from "@/db/schema";
 import { cookies } from "next/headers";
@@ -58,6 +58,44 @@ export const getAllProduct = async () => {
         console.log(products);
         return products;
     } catch {
+        return null;
+    }
+};
+
+export const editProduct = async ({
+    _id,
+    category,
+    expiryDate,
+    name,
+    quantity,
+}: ProductDetails) => {
+    const token = (await cookies()).get("token")?.value;
+    if (!token) return null;
+
+    try {
+        const timeOfExpired = new Date(expiryDate!);
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
+        let status: "fresh" | "expiring-soon" | "expired" | "used" | "wasted";
+        if (timeOfExpired.getTime() <= now.getTime()) status = "expired";
+        else if (timeOfExpired.getTime() <= now.getTime() + threeDaysInMs)
+            status = "expiring-soon";
+        else status = "fresh";
+
+        const product = await db
+            .update(Items)
+            .set({
+                category,
+                status,
+                quantity,
+                name,
+            })
+            .where(eq(Items._id, _id))
+            .returning();
+        return { message: "Successfully Created", product: product[0] };
+    } catch (error) {
+        console.log("Product Update Error ->", error);
         return null;
     }
 };
