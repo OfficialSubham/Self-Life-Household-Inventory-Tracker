@@ -1,6 +1,8 @@
+import { editProduct } from "@/actions/productActions";
 import { categoryEnum } from "@/db/schema";
 import { ProductDetails } from "@/lib/types";
 import { useHandleOnChange } from "@/lib/utils";
+import { productSchema } from "@/lib/validation";
 import { useProductStore } from "@/stores/product-store";
 import { useEffect, useRef } from "react";
 
@@ -8,13 +10,28 @@ const EditProduct = () => {
     const editProductRef = useRef<HTMLDivElement | null>(null);
     const toggelEditProduct = useProductStore((state) => state.toggleEditProduct);
     const editProductDetails = useProductStore((state) => state.editProductDetails);
+    const editTheProduct = useProductStore((state) => state.editTheProduct);
 
     const { details, handleOnChange } = useHandleOnChange<ProductDetails>(
         editProductDetails!,
     );
 
     const handleUpdate = async () => {
-        console.log("Handling Update");
+        const { success, error } = productSchema.safeParse({
+            productName: details.name,
+            quantity: details.quantity,
+            expiryDate: details.expiryDate?.toString(),
+            category: details.category,
+        });
+        console.log(error);
+        if (!success) return alert("Please Provide valid edit product details");
+
+        const res = await editProduct(details);
+
+        if (!res) return alert("Something went worng please try again later");
+
+        editTheProduct(res.product._id, res.product);
+        toggelEditProduct(false);
     };
 
     useEffect(() => {
@@ -102,7 +119,7 @@ const EditProduct = () => {
                         className="bg-black text-white h-10 rounded-lg hover:bg-neutral-900 cursor-pointer"
                         onClick={handleUpdate}
                     >
-                        Submit
+                        Update
                     </button>
                 </div>
             </div>
