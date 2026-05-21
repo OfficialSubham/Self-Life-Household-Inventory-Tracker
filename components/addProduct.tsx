@@ -17,6 +17,7 @@ type ProductDetailsType = {
 const AddProduct = () => {
     const addProductRef = useRef<HTMLDivElement | null>(null);
     const hideAddProduct = useProductStore((state) => state.removeAddProduct);
+    const pushProduct = useProductStore((state) => state.addProduct);
     const startLoading = useLoadingStore((state) => state.start);
     const stopLoading = useLoadingStore((state) => state.end);
 
@@ -28,8 +29,10 @@ const AddProduct = () => {
     });
 
     const handleSubmit = async () => {
-        const { success, error } = productSchema.safeParse(details);
-        console.log(error);
+        const { success } = productSchema.safeParse({
+            ...details,
+            quantity: Number(details.quantity),
+        });
         if (!success) return alert("Provide valid product details");
         startLoading();
         const res = await createProduct(details);
@@ -37,6 +40,7 @@ const AddProduct = () => {
         if (!res) alert("Something went wrong please try after some time");
         else {
             alert(res.message);
+            pushProduct(res.product);
             hideAddProduct();
         }
     };
@@ -64,7 +68,7 @@ const AddProduct = () => {
     return (
         <div className="bg-black/50 backdrop-blur-xs fixed inset-0 items-center flex justify-center">
             <div
-                className="w-120 bg-white rounded-2xl border p-4 gap-4 flex flex-col"
+                className="w-100 bg-white rounded-2xl border p-4 gap-4 flex flex-col"
                 ref={addProductRef}
             >
                 <div className="flex flex-col">
@@ -101,7 +105,6 @@ const AddProduct = () => {
                         type="number"
                         name="quantity"
                         className="border rounded-lg h-10 border-neutral-400 px-2"
-                        placeholder="1"
                         value={details.quantity}
                         onChange={handleOnChange}
                     />
@@ -112,7 +115,6 @@ const AddProduct = () => {
                         type="date"
                         name="expiryDate"
                         className="border rounded-lg h-10 border-neutral-400 px-2"
-                        placeholder="1"
                         value={details.expiryDate}
                         onChange={handleOnChange}
                     />
