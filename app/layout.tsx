@@ -1,6 +1,7 @@
 import { Inter, JetBrains_Mono, Oswald } from "next/font/google";
 import type { Metadata } from "next";
 import "./globals.css";
+import Loading from "@/components/loading";
 
 export const metadata: Metadata = {
     title: "Inventory Management",
@@ -33,6 +34,7 @@ export default async function RootLayout({
             <body
                 className={`min-h-screen flex flex-col bg-neutral-200 text-black ${inter.variable} ${oswald.variable} ${mono.variable}`}
             >
+                <Loading />
                 {children}
             </body>
         </html>
