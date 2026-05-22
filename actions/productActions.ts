@@ -99,3 +99,17 @@ export const editProduct = async ({
         return null;
     }
 };
+
+export const deleteProduct = async (productId: number) => {
+    const token = (await cookies()).get("token")?.value;
+    if (!token) return null;
+
+    try {
+        await db.delete(Items).where(eq(Items._id, productId));
+
+        return { message: "Product Deleted Successfully" };
+    } catch (error) {
+        console.log("Delete Product Error ->", error);
+        return null;
+    }
+};
