@@ -20,7 +20,7 @@ const EditProduct = () => {
         const { success, error } = productSchema.safeParse({
             productName: details.name,
             quantity: details.quantity,
-            expiryDate: details.expiryDate?.toString(),
+            expiryDate: details.expiryDate?.toISOString().split("T")[0],
             category: details.category,
         });
         console.log(error);
