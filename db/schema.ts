@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { check, integer, pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
 
 export const categoryEnum = pgEnum("category_enum", [
@@ -31,6 +31,7 @@ export const Household = pgTable(
         name: varchar("name", { length: 255 }).notNull(),
         inviteCode: varchar("invite_code", { length: 255 }).notNull().unique(),
         wasteScore: integer("waste_score").default(0),
+        ownerId: integer("owner_id").notNull(),
     },
     (table) => [
         check(
@@ -49,6 +50,13 @@ export const Users = pgTable("users", {
     householdId: integer("household_id").references(() => Household._id),
     createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const householdRelations = relations(Household, ({ one }) => ({
+    user: one(Users, {
+        fields: [Household.ownerId],
+        references: [Users._id],
+    }),
+}));
 
 export const Items = pgTable("items", {
     _id: integer("_id").primaryKey().generatedAlwaysAsIdentity(),

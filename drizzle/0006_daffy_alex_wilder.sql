@@ -1,0 +1,1 @@
+ALTER TABLE "household" ADD COLUMN "owner_id" integer NOT NULL;

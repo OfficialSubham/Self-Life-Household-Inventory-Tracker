@@ -43,6 +43,13 @@
       "when": 1778333003101,
       "tag": "0005_steady_lockjaw",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1778512816967,
+      "tag": "0006_daffy_alex_wilder",
+      "breakpoints": true
     }
   ]
 }
