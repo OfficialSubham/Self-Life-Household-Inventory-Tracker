@@ -1,14 +1,27 @@
-import { getUserWithRoomStatus } from "@/actions/user";
+import { getUserWithAllProduct } from "@/actions/user";
 import { redirect } from "next/navigation";
+import ClientLayout from "./ClientLayout";
+import Navbar from "@/components/navbar";
+import { getHomeDetails } from "@/actions/homeActions";
 
 const HomeLayout = async ({ children }: { children: React.ReactNode }) => {
-    const response = await getUserWithRoomStatus();
+    const response = await getUserWithAllProduct();
     if (!response) redirect("/login");
-
-    const details = await response.json();
-    console.log(details);
-    if (!details.user || !details.roomId) redirect("/");
-    return <div className="relative">{children}</div>;
+    if (!response.user || !response.user.householdId) redirect("/");
+    const houseDetails = await getHomeDetails();
+    console.log("House Details ->", houseDetails);
+    return (
+        <div className="relative min-h-screen flex  flex-row">
+            <Navbar />
+            <ClientLayout
+                user={{ ...response.user }}
+                items={response.items}
+                houseDetails={houseDetails}
+            >
+                {children}
+            </ClientLayout>
+        </div>
+    );
 };
 
 export default HomeLayout;
