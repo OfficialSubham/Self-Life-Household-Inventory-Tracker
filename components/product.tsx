@@ -41,8 +41,12 @@ const Product = ({
     };
 
     return (
-        <div className="bg-white h-80 w-50 lg:w-80 rounded-lg border border-neutral-400 p-4 flex flex-col gap-4">
-            <h1 className="text-3xl font-bold font-heading">{productDetails.name}</h1>
+        <div className="bg-white py-10 w-50 lg:w-80 rounded-lg border border-neutral-400 p-4 flex flex-col gap-4">
+            <h1 className="text-3xl font-bold font-heading">
+                {productDetails.name.length > 18
+                    ? productDetails.name.substring(0, 18) + "..."
+                    : productDetails.name}
+            </h1>
             <h3 className="font-heading text-xl">
                 Category :{" "}
                 <span className="text-lg font-bold">{productDetails.category}</span>
