@@ -13,7 +13,6 @@ const Loading = () => {
         } else {
             document.body.style.overflow = "auto";
         }
-        console.log("Running Use Effect");
         return () => {
             document.body.style.overflow = "auto";
         };
