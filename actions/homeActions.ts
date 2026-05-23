@@ -18,7 +18,6 @@ export async function createHome(name: string) {
         const { user } = await userFromDbRes?.json();
         if (user.householdId)
             return { status: 400, message: "Already in a room", householdId: null };
-
         //Creating and updating user house Id with the newlly created house
 
         const newHouseData = await db
@@ -26,6 +25,7 @@ export async function createHome(name: string) {
             .values({
                 inviteCode: invitationCode,
                 name,
+                ownerId: user._id,
             })
             .returning();
 
@@ -117,5 +117,22 @@ export async function leaveHome() {
         };
     } catch (error) {
         return { status: 500, message: "Error", error };
+    }
+}
+
+export async function getHomeDetails() {
+    const token = (await cookies()).get("token")?.value;
+    if (!token) return null;
+
+    try {
+        const user = getUserFromToken(token);
+        const homeDetails = await db
+            .select()
+            .from(Household)
+            .where(eq(Household._id, user.householdId));
+        return homeDetails[0];
+    } catch (error) {
+        console.log("Get House Details Error ->", error);
+        return null;
     }
 }
