@@ -17,13 +17,12 @@ const EditProduct = () => {
     );
 
     const handleUpdate = async () => {
-        const { success, error } = productSchema.safeParse({
+        const { success } = productSchema.safeParse({
             productName: details.name,
             quantity: details.quantity,
-            expiryDate: details.expiryDate?.toISOString().split("T")[0],
+            expiryDate: details.expiryDate,
             category: details.category,
         });
-        console.log(error);
         if (!success) return alert("Please Provide valid edit product details");
 
         const res = await editProduct(details);
