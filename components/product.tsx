@@ -41,7 +41,7 @@ const Product = ({
     };
 
     return (
-        <div className="bg-white py-10 w-50 lg:w-80 rounded-lg border border-neutral-400 p-4 flex flex-col gap-4">
+        <div className="bg-white py-10 w-full max-w-[320px] rounded-lg border border-neutral-400 p-4 flex flex-col gap-4 h-full">
             <h1 className="text-3xl font-bold font-heading">
                 {productDetails.name.length > 18
                     ? productDetails.name.substring(0, 18) + "..."
