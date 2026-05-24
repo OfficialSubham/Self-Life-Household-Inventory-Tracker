@@ -13,26 +13,31 @@ const Page = () => {
     const userDetails = useUserStore((state) => state.user);
     const isOwner = useUserStore((state) => state.isOwner);
     return (
-        <div className="flex-1 flex font-body flex-col pt-20 min-h-[200vh]">
+        <div className="mx-auto flex font-body flex-col pt-20 min-h-full ">
             {isAddProductVisible && <AddProduct />}
             {editProductVisible && <EditProduct />}
-
-            <div className="flex-1 mt-2 max-w-5xl mx-auto w-full">
-                {allProduct && (
-                    <div className="grid gap-2 mx-auto grid-cols-2 md:grid-cols-3 place-items-center">
-                        {allProduct.map((p, idx) => {
-                            return (
-                                <Product
-                                    key={idx}
-                                    isOwner={isOwner}
-                                    isProductCreator={userDetails?._id == p.addedBy}
-                                    productDetails={p}
-                                />
-                            );
-                        })}
-                    </div>
-                )}
+            <div className="h-10  items-center justify-end flex right-0 gap-2 px-1">
+                <div className="bg-amber-50 h-full w-20 rounded-lg flex items-center justify-center font-mono">
+                    Sort
+                </div>
+                <div className="bg-amber-50 h-full w-20 rounded-lg flex items-center justify-center font-mono">
+                    Filter
+                </div>
             </div>
+            {allProduct && (
+                <div className="mt-2 max-w-5xl w-full min-h-full grid gap-2 mx-auto grid-cols-2 md:grid-cols-3 items-stretch justify-items-center">
+                    {allProduct.map((p, idx) => {
+                        return (
+                            <Product
+                                key={idx}
+                                isOwner={isOwner}
+                                isProductCreator={userDetails?._id == p.addedBy}
+                                productDetails={p}
+                            />
+                        );
+                    })}
+                </div>
+            )}
             <AddProductButton />
         </div>
     );
