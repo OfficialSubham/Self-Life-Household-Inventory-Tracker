@@ -40,5 +40,9 @@ export default function ClientLayout({
     useEffect(() => {
         setProducts(items);
     }, [items, setProducts]);
-    return <>{children}</>;
+    return (
+        <div className="fixed pb-30 h-full w-full overflow-y-auto no-scrollbar">
+            {children}
+        </div>
+    );
 }

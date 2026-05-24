@@ -11,7 +11,7 @@ const HomeLayout = async ({ children }: { children: React.ReactNode }) => {
     const houseDetails = await getHomeDetails();
     console.log("House Details ->", houseDetails);
     return (
-        <div className="relative min-h-screen flex  flex-row">
+        <div className="relative min-h-screen flex flex-row">
             <Navbar />
             <ClientLayout
                 user={{ ...response.user }}
