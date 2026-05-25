@@ -6,7 +6,7 @@ const Page = async () => {
     const members = await getAllMembers();
     if (!members?.users) return null;
     return (
-        <div className="flex items-center justify-center flex-1 relative w-full">
+        <div className="flex items-center justify-center min-h-screen relative w-full">
             <MemberClientLayout
                 members={members.users}
                 houseDetails={members.houseDetails}
