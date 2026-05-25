@@ -5,7 +5,9 @@ const Filter = () => {
     const [filterOpen, setFilterOpen] = useState(false);
     const showUserAskedProduct = useProductStore((state) => state.showUserAskedProduct);
     const resetProduct = useProductStore((state) => state.resetProduct);
-
+    const { expiredItems, expiringSoonItems, freshItems } = useProductStore(
+        (state) => state.badgesCount,
+    );
     const handleClick = (cbfn: () => void) => {
         cbfn();
         setFilterOpen(false);
@@ -30,7 +32,10 @@ const Filter = () => {
                                 handleClick(() => showUserAskedProduct("fresh"));
                             }}
                         >
-                            Fresh Product
+                            Fresh Items
+                            <span className="bg-green-500 px-2 rounded-full text-xs py-px ml-2">
+                                {freshItems}
+                            </span>
                         </li>
                         <li
                             className="cursor-pointer"
@@ -38,7 +43,10 @@ const Filter = () => {
                                 handleClick(() => showUserAskedProduct("expiring-soon"));
                             }}
                         >
-                            Expiring soon Product
+                            Expiring soon Items
+                            <span className="bg-yellow-500 px-2 rounded-full text-xs py-px ml-2">
+                                {expiringSoonItems}
+                            </span>
                         </li>
                         <li
                             className="cursor-pointer"
@@ -46,7 +54,10 @@ const Filter = () => {
                                 handleClick(() => showUserAskedProduct("expired"));
                             }}
                         >
-                            Expired Product
+                            Expired Items{" "}
+                            <span className="bg-red-500 px-2 rounded-full text-xs py-px ml-2">
+                                {expiredItems}
+                            </span>
                         </li>
                         <li
                             className="cursor-pointer"
