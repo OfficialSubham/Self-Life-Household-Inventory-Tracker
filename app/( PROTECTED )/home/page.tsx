@@ -2,6 +2,7 @@
 import AddProduct from "@/components/addProduct";
 import AddProductButton from "@/components/addProductButton";
 import EditProduct from "@/components/EditProduct";
+import Filter from "@/components/filter";
 import Product from "@/components/product";
 import Sort from "@/components/sort";
 import { useProductStore } from "@/stores/product-store";
@@ -20,9 +21,7 @@ const Page = () => {
             {editProductVisible && <EditProduct />}
             <div className="h-10  items-center justify-end flex right-0 gap-2 px-1">
                 <Sort />
-                <div className="bg-amber-50 h-full w-20 rounded-lg flex items-center justify-center font-mono">
-                    Filter
-                </div>
+                <Filter />
             </div>
             {allProduct && (
                 <div className="mt-2 max-w-5xl w-full min-h-full grid gap-2 mx-auto grid-cols-2 md:grid-cols-3 items-stretch justify-items-center">
