@@ -1,5 +1,12 @@
 import { ProductDetails } from "@/lib/types";
+import { calculateBadgesCountForAllProduct } from "@/lib/utils";
 import { create } from "zustand";
+
+const statusToBadgeKey = {
+    fresh: "freshItems",
+    "expiring-soon": "expiringSoonItems",
+    expired: "expiredItems",
+} as const;
 
 export type ProductState = {
     addProductVisible: boolean;
@@ -7,6 +14,11 @@ export type ProductState = {
     editProductDetails: ProductDetails | null;
     allProducts: ProductDetails[] | null;
     displayedProducts: ProductDetails[] | null;
+    badgesCount: {
+        freshItems: number;
+        expiringSoonItems: number;
+        expiredItems: number;
+    };
 };
 
 export type ProductStoreActions = {
@@ -21,6 +33,7 @@ export type ProductStoreActions = {
     sortProductsByExpiry: () => void;
     resetProduct: () => void;
     sortLexicographical: () => void;
+    showUserAskedProduct: (type: string) => void;
 };
 
 export type ProductStore = ProductState & ProductStoreActions;
@@ -31,15 +44,37 @@ export const useProductStore = create<ProductStore>((set) => ({
     displayedProducts: null,
     editProductVisible: false,
     editProductDetails: null,
+    badgesCount: {
+        expiredItems: 0,
+        expiringSoonItems: 0,
+        freshItems: 0,
+    },
     showAddProduct: () => set({ addProductVisible: true }),
     removeAddProduct: () => set({ addProductVisible: false }),
     setProducts: (products) =>
-        set({ allProducts: products, displayedProducts: products }),
+        set(() => {
+            return {
+                allProducts: products,
+                displayedProducts: products,
+                badgesCount: calculateBadgesCountForAllProduct(products),
+            };
+        }),
     addProduct: (product) =>
-        set((state) => ({
-            allProducts: state.allProducts?.concat(product),
-            displayedProducts: state.allProducts?.concat(product),
-        })),
+        set((state) => {
+            const updatedBadge = { ...state.badgesCount };
+            if (
+                product.status == "expired" ||
+                product.status == "expiring-soon" ||
+                product.status == "fresh"
+            )
+                updatedBadge[statusToBadgeKey[product.status]]++;
+
+            return {
+                allProducts: state.allProducts?.concat(product),
+                displayedProducts: state.allProducts?.concat(product),
+                badgesCount: updatedBadge,
+            };
+        }),
     toggleEditProduct: (toggle) => set({ editProductVisible: toggle }),
     setEditProductDetails: (product) => set({ editProductDetails: product }),
     editTheProduct: (id, product) =>
@@ -51,10 +86,26 @@ export const useProductStore = create<ProductStore>((set) => ({
             displayedProducts: state.allProducts,
         })),
     deleteTheProduct: (id) =>
-        set((state) => ({
-            allProducts: state.allProducts?.filter((eachProd) => eachProd._id != id),
-            displayedProducts: state.allProducts,
-        })),
+        set((state) => {
+            const updatedBadge = { ...state.badgesCount };
+
+            return {
+                allProducts: state.allProducts?.filter((eachProd) => {
+                    if (eachProd._id == id) {
+                        if (
+                            eachProd.status == "expired" ||
+                            eachProd.status == "expiring-soon" ||
+                            eachProd.status == "fresh"
+                        )
+                            updatedBadge[statusToBadgeKey[eachProd.status]]--;
+                        return false;
+                    }
+                    return true;
+                }),
+
+                displayedProducts: state.allProducts,
+            };
+        }),
     sortProductsByExpiry: () =>
         set((state) => {
             if (!state.allProducts || !state.displayedProducts)
@@ -79,6 +130,17 @@ export const useProductStore = create<ProductStore>((set) => ({
                 displayedProducts: [...state.displayedProducts].sort((a, b) => {
                     return a.name.localeCompare(b.name);
                 }),
+            };
+        }),
+    showUserAskedProduct: (type) =>
+        set((state) => {
+            if (!state.displayedProducts || !state.allProducts)
+                return { displayedProducts: [] };
+
+            return {
+                displayedProducts: state.allProducts.filter(
+                    (product) => product.status == type,
+                ),
             };
         }),
 }));
