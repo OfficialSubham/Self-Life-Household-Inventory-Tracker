@@ -24,8 +24,9 @@ export function proxy(req: NextRequest) {
     }
 
     try {
-        verify(token, JWT_SECRET) as JwtPayload;
-
+        const decoded = verify(token, JWT_SECRET) as JwtPayload;
+        if (decoded.householdId && pathname == "/")
+            return NextResponse.redirect(new URL("/home", req.url));
         //I am checking where the client is in / route or in another route if there is no room id in his/her token
         // if (decoded.roomId == -1) {
         //     if (pathname !== "/") return NextResponse.redirect(new URL("/", req.url));
