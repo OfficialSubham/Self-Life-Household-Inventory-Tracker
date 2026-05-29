@@ -11,6 +11,8 @@ const statusToBadgeKey = {
 export type ProductState = {
     addProductVisible: boolean;
     editProductVisible: boolean;
+    individualProductVisible: boolean;
+    individualProduct: ProductDetails | null;
     editProductDetails: ProductDetails | null;
     allProducts: ProductDetails[] | null;
     displayedProducts: ProductDetails[] | null;
@@ -34,6 +36,7 @@ export type ProductStoreActions = {
     resetProduct: () => void;
     sortLexicographical: () => void;
     showUserAskedProduct: (type: string) => void;
+    toggleIndividualProduct: (show: boolean, product: ProductDetails | null) => void;
 };
 
 export type ProductStore = ProductState & ProductStoreActions;
@@ -44,6 +47,8 @@ export const useProductStore = create<ProductStore>((set) => ({
     displayedProducts: null,
     editProductVisible: false,
     editProductDetails: null,
+    individualProductVisible: false,
+    individualProduct: null,
     badgesCount: {
         expiredItems: 0,
         expiringSoonItems: 0,
@@ -78,32 +83,35 @@ export const useProductStore = create<ProductStore>((set) => ({
     toggleEditProduct: (toggle) => set({ editProductVisible: toggle }),
     setEditProductDetails: (product) => set({ editProductDetails: product }),
     editTheProduct: (id, product) =>
-        set((state) => ({
-            allProducts: state.allProducts?.map((eachProd) => {
+        set((state) => {
+            const updatedProducts = state.allProducts?.map((eachProd) => {
                 if (eachProd._id == id) return product;
                 return eachProd;
-            }),
-            displayedProducts: state.allProducts,
-        })),
+            });
+
+            return {
+                allProducts: updatedProducts,
+                displayedProducts: updatedProducts,
+            };
+        }),
     deleteTheProduct: (id) =>
         set((state) => {
             const updatedBadge = { ...state.badgesCount };
-
+            const updatedProducts = state.allProducts?.filter((eachProd) => {
+                if (eachProd._id == id) {
+                    if (
+                        eachProd.status == "expired" ||
+                        eachProd.status == "expiring-soon" ||
+                        eachProd.status == "fresh"
+                    )
+                        updatedBadge[statusToBadgeKey[eachProd.status]]--;
+                    return false;
+                }
+                return true;
+            });
             return {
-                allProducts: state.allProducts?.filter((eachProd) => {
-                    if (eachProd._id == id) {
-                        if (
-                            eachProd.status == "expired" ||
-                            eachProd.status == "expiring-soon" ||
-                            eachProd.status == "fresh"
-                        )
-                            updatedBadge[statusToBadgeKey[eachProd.status]]--;
-                        return false;
-                    }
-                    return true;
-                }),
-
-                displayedProducts: state.allProducts,
+                allProducts: updatedProducts,
+                displayedProducts: updatedProducts,
             };
         }),
     sortProductsByExpiry: () =>
@@ -142,5 +150,12 @@ export const useProductStore = create<ProductStore>((set) => ({
                     (product) => product.status == type,
                 ),
             };
+        }),
+    toggleIndividualProduct: (show, product) =>
+        set(() => {
+            if (product) {
+                return { individualProductVisible: show, individualProduct: product };
+            }
+            return { individualProductVisible: false };
         }),
 }));
