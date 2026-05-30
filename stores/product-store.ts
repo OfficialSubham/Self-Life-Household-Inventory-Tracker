@@ -6,6 +6,7 @@ const statusToBadgeKey = {
     fresh: "freshItems",
     "expiring-soon": "expiringSoonItems",
     expired: "expiredItems",
+    used: "usedProduct",
 } as const;
 
 export type ProductState = {
@@ -20,6 +21,8 @@ export type ProductState = {
         freshItems: number;
         expiringSoonItems: number;
         expiredItems: number;
+        usedProduct: number;
+        totalProduct: number;
     };
 };
 
@@ -37,6 +40,7 @@ export type ProductStoreActions = {
     sortLexicographical: () => void;
     showUserAskedProduct: (type: string) => void;
     toggleIndividualProduct: (show: boolean, product: ProductDetails | null) => void;
+    showExpiredItemsWithin24Hrs: () => void;
 };
 
 export type ProductStore = ProductState & ProductStoreActions;
@@ -53,6 +57,8 @@ export const useProductStore = create<ProductStore>((set) => ({
         expiredItems: 0,
         expiringSoonItems: 0,
         freshItems: 0,
+        usedProduct: 0,
+        totalProduct: 0,
     },
     showAddProduct: () => set({ addProductVisible: true }),
     removeAddProduct: () => set({ addProductVisible: false }),
@@ -84,26 +90,36 @@ export const useProductStore = create<ProductStore>((set) => ({
     setEditProductDetails: (product) => set({ editProductDetails: product }),
     editTheProduct: (id, product) =>
         set((state) => {
+            const updatedBadge = { ...state.badgesCount };
             const updatedProducts = state.allProducts?.map((eachProd) => {
-                if (eachProd._id == id) return product;
+                if (eachProd._id == id) {
+                    if (
+                        eachProd.status != product.status &&
+                        product.status != "wasted" &&
+                        product.status != null
+                    ) {
+                        updatedBadge[statusToBadgeKey[product.status]]++;
+                    }
+                    return product;
+                }
                 return eachProd;
             });
 
             return {
                 allProducts: updatedProducts,
                 displayedProducts: updatedProducts,
+                badgesCount: updatedBadge,
             };
         }),
     deleteTheProduct: (id) =>
         set((state) => {
-            const updatedBadge = { ...state.badgesCount };
+            const updatedBadge = {
+                ...state.badgesCount,
+                totalProduct: state.badgesCount.totalProduct - 1,
+            };
             const updatedProducts = state.allProducts?.filter((eachProd) => {
                 if (eachProd._id == id) {
-                    if (
-                        eachProd.status == "expired" ||
-                        eachProd.status == "expiring-soon" ||
-                        eachProd.status == "fresh"
-                    )
+                    if (eachProd.status != null && eachProd.status != "wasted")
                         updatedBadge[statusToBadgeKey[eachProd.status]]--;
                     return false;
                 }
@@ -157,5 +173,22 @@ export const useProductStore = create<ProductStore>((set) => ({
                 return { individualProductVisible: show, individualProduct: product };
             }
             return { individualProductVisible: false };
+        }),
+    showExpiredItemsWithin24Hrs: () =>
+        set((state) => {
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+            const oneDay = 24 * 60 * 60 * 1000;
+            const expiringProducts = state.allProducts?.filter((eachProd) => {
+                const expiringTime = new Date(eachProd.expiryDate!);
+                if (
+                    expiringTime.getTime() <= now.getTime() + oneDay &&
+                    expiringTime.getTime() >= now.getTime()
+                )
+                    return true;
+                return false;
+            });
+
+            return { displayedProducts: expiringProducts };
         }),
 }));
