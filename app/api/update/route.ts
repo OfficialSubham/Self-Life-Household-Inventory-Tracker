@@ -10,7 +10,7 @@ export const getStatus = (expiryTime: Date) => {
 
     const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
     let status: "fresh" | "expiring-soon" | "expired" | "used" | "wasted";
-    if (expiryTime.getTime() <= currTime.getTime()) status = "expired";
+    if (expiryTime.getTime() < currTime.getTime()) status = "expired";
     else if (expiryTime.getTime() <= currTime.getTime() + threeDaysInMs)
         status = "expiring-soon";
     else status = "fresh";

@@ -78,7 +78,7 @@ export const editProduct = async ({
         now.setHours(0, 0, 0, 0);
         const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
         let status: "fresh" | "expiring-soon" | "expired" | "used" | "wasted";
-        if (timeOfExpired.getTime() <= now.getTime()) status = "expired";
+        if (timeOfExpired.getTime() < now.getTime()) status = "expired";
         else if (timeOfExpired.getTime() <= now.getTime() + threeDaysInMs)
             status = "expiring-soon";
         else status = "fresh";
