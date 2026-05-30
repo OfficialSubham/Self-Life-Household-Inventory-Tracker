@@ -16,8 +16,8 @@ const Product = ({
         fresh: "bg-green-500",
         "expiring-soon": "bg-yellow-500",
         expired: "bg-red-500",
-        used: "",
-        wasted: "",
+        used: "bg-purple-400",
+        wasted: "bg-gray-400",
         null: "",
     };
 
@@ -26,6 +26,9 @@ const Product = ({
     const toggleEditProduct = useProductStore((state) => state.toggleEditProduct);
     const deleteTheProduct = useProductStore((state) => state.deleteTheProduct);
     const setEditProductDetails = useProductStore((state) => state.setEditProductDetails);
+    const toggleIndividualProduct = useProductStore(
+        (state) => state.toggleIndividualProduct,
+    );
 
     const handleDeleteProduct = async () => {
         startLoading();
@@ -41,7 +44,12 @@ const Product = ({
     };
 
     return (
-        <div className="bg-white py-10 w-full max-w-[320px] rounded-lg border border-neutral-400 p-4 flex flex-col gap-4 h-full">
+        <div
+            className="bg-white py-10 w-full max-w-[320px] rounded-lg border border-neutral-400 p-4 flex flex-col gap-4 h-full"
+            onDoubleClick={() => {
+                toggleIndividualProduct(true, productDetails);
+            }}
+        >
             <h1 className="text-3xl font-bold font-heading">
                 {productDetails.name.length > 18
                     ? productDetails.name.substring(0, 18) + "..."
