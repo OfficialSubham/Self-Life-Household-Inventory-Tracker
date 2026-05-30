@@ -1,11 +1,11 @@
-import { NextRequest } from "next/server";
 import { JwtPayload } from "./types";
 import { verify } from "jsonwebtoken";
+import { cookies } from "next/headers";
 
 const JWT_SECRET = process.env.JWT_SECRET || "";
 
-export function getUser(req: NextRequest) {
-    const token = req.cookies.get("token")?.value;
+export async function getUser() {
+    const token = (await cookies()).get("token")?.value;
     if (!token) return null;
 
     try {
@@ -14,4 +14,16 @@ export function getUser(req: NextRequest) {
     } catch {
         return null;
     }
+}
+
+export async function getUserDetails() {
+    const res = await fetch("api/me", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    const data = await res.json();
+    return data;
 }
