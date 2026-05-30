@@ -5,6 +5,9 @@ const Filter = () => {
     const [filterOpen, setFilterOpen] = useState(false);
     const showUserAskedProduct = useProductStore((state) => state.showUserAskedProduct);
     const resetProduct = useProductStore((state) => state.resetProduct);
+    const showExpiringItemsWithIn24Hrs = useProductStore(
+        (state) => state.showExpiredItemsWithin24Hrs,
+    );
     const { expiredItems, expiringSoonItems, freshItems } = useProductStore(
         (state) => state.badgesCount,
     );
@@ -24,7 +27,7 @@ const Filter = () => {
                 Filter
             </div>
             {filterOpen && (
-                <div className="bg-amber-50 mt-2 absolute w-50 rounded-lg -left-24">
+                <div className="bg-amber-50 mt-2 absolute w-60 rounded-lg -left-34">
                     <ul className="flex p-3 gap-2 flex-col divide-black divide-y">
                         <li
                             className="cursor-pointer"
@@ -58,6 +61,12 @@ const Filter = () => {
                             <span className="bg-red-500 px-2 rounded-full text-xs py-px ml-2">
                                 {expiredItems}
                             </span>
+                        </li>
+                        <li
+                            className="cursor-pointer"
+                            onClick={showExpiringItemsWithIn24Hrs}
+                        >
+                            Expired Items within 24hrs{" "}
                         </li>
                         <li
                             className="cursor-pointer"
