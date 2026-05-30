@@ -24,3 +24,10 @@ Learned about creating a auth middleware which will check user had send token in
 - Learned about creating/using google fonts from next/font
 - know about its use using variables in different places
 - Learned about connecting the variables in global css file for tailwind suggestion and use.
+
+02/05/26
+Learned about Client Layout and how can i wrap something up with client component even the top part is a server component
+
+30/05/25
+Completed the project learned about node mailer and about using and in drizzle
+very interesting project BTW.
