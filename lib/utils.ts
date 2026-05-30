@@ -20,16 +20,20 @@ export const calculateBadgesCountForAllProduct = (products: ProductDetails[]) =>
     let freshItems = 0;
     let expiringSoonItems = 0;
     let expiredItems = 0;
+    let usedProduct = 0;
 
     for (const product of products) {
         if (product.status == "fresh") freshItems++;
         else if (product.status == "expired") expiredItems++;
-        else expiringSoonItems++;
+        else if (product.status == "expiring-soon") expiringSoonItems++;
+        else if (product.status == "used") usedProduct++;
     }
 
     return {
         freshItems,
         expiredItems,
         expiringSoonItems,
+        usedProduct,
+        totalProduct: products.length,
     };
 };
