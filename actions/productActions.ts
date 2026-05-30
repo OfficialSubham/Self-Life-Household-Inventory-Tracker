@@ -113,3 +113,17 @@ export const deleteProduct = async (productId: number) => {
         return null;
     }
 };
+
+export const editProductUsage = async (id: number, status: "used" | "wasted") => {
+    const token = (await cookies()).get("token")?.value;
+    if (!token) return null;
+
+    try {
+        await db.update(Items).set({ status }).where(eq(Items._id, id));
+
+        return { message: "Product Updated successfully" };
+    } catch (error) {
+        console.log("Edit product Usage error ->", error);
+        return null;
+    }
+};
